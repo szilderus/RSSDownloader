@@ -1,12 +1,15 @@
 import feedparser, requests, os
 
-d = feedparser.parse('https://feeds.twit.tv/sn.xml')
-mp3url = d.entries[0].id
-print(mp3url)
 
-filename = mp3url.split('/')[-1]
+#https://feeds.twit.tv/sn.xml
+
+d = feedparser.parse('https://feeds.twit.tv/sn_video_hd.xml')
+fileUrl = d.entries[0].id
+print(fileUrl)
+
+filename = fileUrl.split('/')[-1]
 print(filename)
-r = requests.get(mp3url, allow_redirects=True)
+r = requests.get(fileUrl, allow_redirects=True)
 
 if not os.path.exists(filename) :
     #download file as 
