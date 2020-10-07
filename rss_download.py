@@ -1,4 +1,4 @@
-import feedparser, requests, os, subprocess
+import feedparser, requests, os, subprocess, shlex
 
 def download_file(url):
     local_filename = url.split('/')[-1]
@@ -35,8 +35,13 @@ if not os.path.exists(filename) :
 
 print('File %s exists. Opening...' % (filename))
 
-p = subprocess.run(['vlc', '%s' % (filename),'-f'])
+command_line = "vlc %s -f" % (filename)
+args = shlex.split(command_line)
 
-print(p)
+#['vlc', '%s' % (filename),'-f']
+#p = subprocess.run(['vlc', '%s' % (filename),'-f'], capture_output=True, shell=True)
+p = subprocess.Popen(args, shell=False)
+
+print(p.pid)
 
 
