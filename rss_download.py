@@ -1,4 +1,4 @@
-import feedparser, requests, os, subprocess, shlex
+import feedparser, requests, os, subprocess, shlex, time
 
 def download_file(url):
     local_filename = url.split('/')[-1]
@@ -13,6 +13,23 @@ def download_file(url):
                 f.write(chunk)
     return local_filename
     
+
+def wait_timeout_and_close(proc, seconds):
+    """Wait for a process to finish, or raise exception after timeout"""
+    start = time.time()
+    end = start + seconds
+    interval = min(seconds / 1000.0, .25)
+
+    while True:
+        result = proc.poll()
+        if result is not None:
+            return result
+        if time.time() >= end:
+            proc.kill()
+            #raise RuntimeError("Process timed out")
+        time.sleep(interval)
+        
+
 #mp3 feed - https://feeds.twit.tv/sn.xml
 
 d = feedparser.parse('https://feeds.twit.tv/sn_video_hd.xml')
@@ -43,5 +60,4 @@ args = shlex.split(command_line)
 p = subprocess.Popen(args, shell=False)
 
 print(p.pid)
-
-
+wait_timeout_and_close(p, 1800)
