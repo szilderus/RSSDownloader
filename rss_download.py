@@ -1,7 +1,5 @@
 import feedparser, requests, os
 
-
-
 def download_file(url):
     local_filename = url.split('/')[-1]
     # NOTE the stream=True parameter below
@@ -36,5 +34,5 @@ if not os.path.exists(filename) :
     download_file(fileUrl)
 
 print('File %s exists. Opening...' % (filename))
-os.system('vlc %s' % (filename))
+os.system('vlc -f %s' % (filename))
 
