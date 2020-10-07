@@ -1,4 +1,4 @@
-import feedparser, requests, os
+import feedparser, requests, os, subprocess
 
 def download_file(url):
     local_filename = url.split('/')[-1]
@@ -34,5 +34,9 @@ if not os.path.exists(filename) :
     download_file(fileUrl)
 
 print('File %s exists. Opening...' % (filename))
-os.system('vlc -f %s' % (filename))
+
+p = subprocess.run(['vlc', '%s' % (filename),'-f'])
+
+print(p)
+
 
