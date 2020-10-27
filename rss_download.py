@@ -5,30 +5,18 @@ def download_file(url):
     # NOTE the stream=True parameter below
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
-        with open(local_filename, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192): 
+        with open(local_filename, 'wb') as f:                    
+            chunkSize = 1000000
+            sum1 = 0        
+            
+            for chunk in r.iter_content(chunk_size=chunkSize): 
                 # If you have chunk encoded response uncomment if
                 # and set chunk_size parameter to None.
                 #if chunk: 
                 f.write(chunk)
+                sum1 += chunkSize
+                print('Downloading %s...' % (sum1))
     return local_filename
-    
-
-def wait_timeout_and_close(proc, seconds):
-    """Wait for a process to finish, or raise exception after timeout"""
-    start = time.time()
-    end = start + seconds
-    interval = min(seconds / 1000.0, .25)
-
-    while True:
-        result = proc.poll()
-        if result is not None:
-            return result
-        if time.time() >= end:
-            proc.kill()
-            #raise RuntimeError("Process timed out")
-        time.sleep(interval)
-        
 
 #mp3 feed - https://feeds.twit.tv/sn.xml
 
@@ -49,15 +37,4 @@ if not os.path.exists(filename) :
     
     #this method is dividing download for chunks
     download_file(fileUrl)
-
-print('File %s exists. Opening...' % (filename))
-
-command_line = "vlc %s -f" % (filename)
-args = shlex.split(command_line)
-
-#['vlc', '%s' % (filename),'-f']
-#p = subprocess.run(['vlc', '%s' % (filename),'-f'], capture_output=True, shell=True)
-p = subprocess.Popen(args, shell=False)
-
-print(p.pid)
-wait_timeout_and_close(p, 1800)
+    print('File %s downloaded...' % (filename))
